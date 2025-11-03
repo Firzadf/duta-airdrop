@@ -37,22 +37,22 @@ const DutaAirdrop = () => {
     loadAdminPassword();
   }, []);
 
-  const loadAirdrops = async () => {
+  const loadAirdrops = () => {
     try {
-      const result = await window.storage.get('airdrops-list');
-      if (result && result.value) {
-        setAirdrops(JSON.parse(result.value));
+      const stored = localStorage.getItem('duta-airdrops-list');
+      if (stored) {
+        setAirdrops(JSON.parse(stored));
       }
     } catch (error) {
-      console.log('No existing data, starting fresh');
+      console.log('No existing data');
     }
   };
 
-  const loadAdminPassword = async () => {
+  const loadAdminPassword = () => {
     try {
-      const result = await window.storage.get('admin-password');
-      if (result && result.value) {
-        setAdminPassword(result.value);
+      const stored = localStorage.getItem('duta-admin-password');
+      if (stored) {
+        setAdminPassword(stored);
       } else {
         // Jika belum ada password, set password pertama kali
         setIsSettingPassword(true);
@@ -64,30 +64,30 @@ const DutaAirdrop = () => {
     }
   };
 
-  const saveAdminPassword = async (password) => {
+  const saveAdminPassword = (password) => {
     try {
-      await window.storage.set('admin-password', password);
+      localStorage.setItem('duta-admin-password', password);
       setAdminPassword(password);
     } catch (error) {
       console.error('Failed to save password:', error);
     }
   };
 
-  const saveAirdrops = async (data) => {
+  const saveAirdrops = (data) => {
     try {
-      await window.storage.set('airdrops-list', JSON.stringify(data));
+      localStorage.setItem('duta-airdrops-list', JSON.stringify(data));
     } catch (error) {
       console.error('Failed to save:', error);
     }
   };
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
     if (isSettingPassword) {
       if (loginPassword.length < 4) {
         alert('Password minimal 4 karakter!');
         return;
       }
-      await saveAdminPassword(loginPassword);
+      saveAdminPassword(loginPassword);
       setIsAdmin(true);
       setShowLoginModal(false);
       setLoginPassword('');
@@ -108,7 +108,7 @@ const DutaAirdrop = () => {
     setIsAdmin(false);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!formData.name || !formData.status) {
       alert('Nama proyek dan status wajib diisi!');
       return;
@@ -117,12 +117,12 @@ const DutaAirdrop = () => {
     if (editingId) {
       const updated = airdrops.map(a => a.id === editingId ? { ...formData, id: editingId } : a);
       setAirdrops(updated);
-      await saveAirdrops(updated);
+      saveAirdrops(updated);
     } else {
       const newAirdrop = { ...formData, id: Date.now() };
       const updated = [...airdrops, newAirdrop];
       setAirdrops(updated);
-      await saveAirdrops(updated);
+      saveAirdrops(updated);
     }
     
     resetForm();
@@ -134,12 +134,12 @@ const DutaAirdrop = () => {
     setShowModal(true);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
     // eslint-disable-next-line no-restricted-globals
     if (confirm('Yakin ingin menghapus airdrop ini?')) {
       const updated = airdrops.filter(a => a.id !== id);
       setAirdrops(updated);
-      await saveAirdrops(updated);
+      saveAirdrops(updated);
     }
   };
 
