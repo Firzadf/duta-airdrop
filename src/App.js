@@ -11,12 +11,11 @@ const DutaAirdrop = () => {
   const [sortBy, setSortBy] = useState('newest');
   
   // Auth states
+  const ADMIN_PASSWORD = 'duta2024'; // GANTI PASSWORD INI!
   const [isAdmin, setIsAdmin] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginPassword, setLoginPassword] = useState('');
-  const [adminPassword, setAdminPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isSettingPassword, setIsSettingPassword] = useState(false);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -34,7 +33,6 @@ const DutaAirdrop = () => {
 
   useEffect(() => {
     loadAirdrops();
-    loadAdminPassword();
   }, []);
 
   const loadAirdrops = () => {
@@ -48,28 +46,14 @@ const DutaAirdrop = () => {
     }
   };
 
-  const loadAdminPassword = () => {
-    try {
-      const stored = localStorage.getItem('duta-admin-password');
-      if (stored) {
-        setAdminPassword(stored);
-      } else {
-        // Jika belum ada password, set password pertama kali
-        setIsSettingPassword(true);
-        setShowLoginModal(true);
-      }
-    } catch (error) {
-      setIsSettingPassword(true);
-      setShowLoginModal(true);
-    }
-  };
-
-  const saveAdminPassword = (password) => {
-    try {
-      localStorage.setItem('duta-admin-password', password);
-      setAdminPassword(password);
-    } catch (error) {
-      console.error('Failed to save password:', error);
+  const handleLogin = () => {
+    if (loginPassword === ADMIN_PASSWORD) {
+      setIsAdmin(true);
+      setShowLoginModal(false);
+      setLoginPassword('');
+    } else {
+      alert('Password salah!');
+      setLoginPassword('');
     }
   };
 
@@ -78,29 +62,6 @@ const DutaAirdrop = () => {
       localStorage.setItem('duta-airdrops-list', JSON.stringify(data));
     } catch (error) {
       console.error('Failed to save:', error);
-    }
-  };
-
-  const handleLogin = () => {
-    if (isSettingPassword) {
-      if (loginPassword.length < 4) {
-        alert('Password minimal 4 karakter!');
-        return;
-      }
-      saveAdminPassword(loginPassword);
-      setIsAdmin(true);
-      setShowLoginModal(false);
-      setLoginPassword('');
-      setIsSettingPassword(false);
-      alert('Password berhasil dibuat! Jangan lupa password ini.');
-    } else {
-      if (loginPassword === adminPassword) {
-        setIsAdmin(true);
-        setShowLoginModal(false);
-        setLoginPassword('');
-      } else {
-        alert('Password salah!');
-      }
     }
   };
 
@@ -403,10 +364,10 @@ const DutaAirdrop = () => {
               <Lock className="w-12 h-12 text-blue-400" />
             </div>
             <h2 className="text-3xl font-bold mb-2 text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              {isSettingPassword ? 'Set Admin Password' : 'Admin Login'}
+              Admin Login
             </h2>
             <p className="text-gray-400 text-center mb-6">
-              {isSettingPassword ? 'Buat password untuk akses admin' : 'Masukkan password admin'}
+              Masukkan password admin untuk mengelola airdrop
             </p>
             
             <div className="space-y-4">
@@ -417,7 +378,7 @@ const DutaAirdrop = () => {
                   onChange={(e) => setLoginPassword(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
                   className="w-full px-4 py-3 pr-12 bg-gray-900/50 border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                  placeholder={isSettingPassword ? "Buat password (min. 4 karakter)" : "Masukkan password"}
+                  placeholder="Masukkan password admin"
                 />
                 <button
                   onClick={() => setShowPassword(!showPassword)}
@@ -432,19 +393,17 @@ const DutaAirdrop = () => {
                   onClick={handleLogin}
                   className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-lg font-semibold transition-all transform hover:scale-105 shadow-lg"
                 >
-                  {isSettingPassword ? 'Set Password' : 'Login'}
+                  Login
                 </button>
-                {!isSettingPassword && (
-                  <button
-                    onClick={() => {
-                      setShowLoginModal(false);
-                      setLoginPassword('');
-                    }}
-                    className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold transition-all"
-                  >
-                    Cancel
-                  </button>
-                )}
+                <button
+                  onClick={() => {
+                    setShowLoginModal(false);
+                    setLoginPassword('');
+                  }}
+                  className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold transition-all"
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </div>
