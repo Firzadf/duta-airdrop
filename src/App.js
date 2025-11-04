@@ -1,5 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Edit2, Trash2, ExternalLink, Filter, Calendar, DollarSign, Sparkles, Lock, LogOut, Eye, EyeOff } from 'lucide-react';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+
+// Firebase Configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBveTvZL7UDugwGYgVsvaQ16M9TktsHo9Q",
+  authDomain: "duta-airdrop.firebaseapp.com",
+  projectId: "duta-airdrop",
+  storageBucket: "duta-airdrop.firebasestorage.app",
+  messagingSenderId: "1095684919771",
+  appId: "1:1095684919771:web:b6ecd9cb373d42321217fe"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 const DutaAirdrop = () => {
   const [airdrops, setAirdrops] = useState([]);
@@ -9,6 +25,7 @@ const DutaAirdrop = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterCategory, setFilterCategory] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
+  const [loading, setLoading] = useState(true);
   
   // Auth states
   const ADMIN_PASSWORD = 'duta2024'; // GANTI PASSWORD INI!
@@ -35,14 +52,20 @@ const DutaAirdrop = () => {
     loadAirdrops();
   }, []);
 
-  const loadAirdrops = () => {
+  const loadAirdrops = async () => {
     try {
-      const stored = localStorage.getItem('duta-airdrops-list');
-      if (stored) {
-        setAirdrops(JSON.parse(stored));
-      }
+      setLoading(true);
+      const querySnapshot = await getDocs(collection(db, 'airdrops'));
+      const airdropsList = [];
+      querySnapshot.forEach((doc) => {
+        airdropsList.push({ id: doc.id, ...doc.data() });
+      });
+      setAirdrops(airdropsList);
     } catch (error) {
-      console.log('No existing data');
+      console.error('Error loading airdrops:', error);
+      alert('Gagal memuat data airdrop. Coba refresh halaman.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -57,50 +80,75 @@ const DutaAirdrop = () => {
     }
   };
 
-  const saveAirdrops = (data) => {
-    try {
-      localStorage.setItem('duta-airdrops-list', JSON.stringify(data));
-    } catch (error) {
-      console.error('Failed to save:', error);
-    }
-  };
-
   const handleLogout = () => {
     setIsAdmin(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!formData.name || !formData.status) {
       alert('Nama proyek dan status wajib diisi!');
       return;
     }
     
-    if (editingId) {
-      const updated = airdrops.map(a => a.id === editingId ? { ...formData, id: editingId } : a);
-      setAirdrops(updated);
-      saveAirdrops(updated);
-    } else {
-      const newAirdrop = { ...formData, id: Date.now() };
-      const updated = [...airdrops, newAirdrop];
-      setAirdrops(updated);
-      saveAirdrops(updated);
+    try {
+      if (editingId) {
+        // Update existing airdrop
+        const airdropRef = doc(db, 'airdrops', editingId);
+        await updateDoc(airdropRef, {
+          name: formData.name,
+          description: formData.description,
+          link: formData.link,
+          status: formData.status,
+          category: formData.category,
+          reward: formData.reward,
+          deadline: formData.deadline,
+          tutorialLink: formData.tutorialLink,
+          updatedAt: Date.now()
+        });
+      } else {
+        // Add new airdrop
+        await addDoc(collection(db, 'airdrops'), {
+          ...formData,
+          createdAt: Date.now(),
+          updatedAt: Date.now()
+        });
+      }
+      
+      await loadAirdrops();
+      resetForm();
+      alert(editingId ? 'Airdrop berhasil diupdate!' : 'Airdrop berhasil ditambahkan!');
+    } catch (error) {
+      console.error('Error saving airdrop:', error);
+      alert('Gagal menyimpan airdrop. Pastikan koneksi internet stabil.');
     }
-    
-    resetForm();
   };
 
   const handleEdit = (airdrop) => {
-    setFormData(airdrop);
+    setFormData({
+      name: airdrop.name,
+      description: airdrop.description || '',
+      link: airdrop.link || '',
+      status: airdrop.status,
+      category: airdrop.category || '',
+      reward: airdrop.reward || '',
+      deadline: airdrop.deadline || '',
+      tutorialLink: airdrop.tutorialLink || ''
+    });
     setEditingId(airdrop.id);
     setShowModal(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     // eslint-disable-next-line no-restricted-globals
     if (confirm('Yakin ingin menghapus airdrop ini?')) {
-      const updated = airdrops.filter(a => a.id !== id);
-      setAirdrops(updated);
-      saveAirdrops(updated);
+      try {
+        await deleteDoc(doc(db, 'airdrops', id));
+        await loadAirdrops();
+        alert('Airdrop berhasil dihapus!');
+      } catch (error) {
+        console.error('Error deleting airdrop:', error);
+        alert('Gagal menghapus airdrop.');
+      }
     }
   };
 
@@ -131,7 +179,7 @@ const DutaAirdrop = () => {
   const getFilteredAndSorted = () => {
     let filtered = airdrops.filter(a => {
       const matchSearch = a.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         a.description.toLowerCase().includes(searchTerm.toLowerCase());
+                         (a.description && a.description.toLowerCase().includes(searchTerm.toLowerCase()));
       const matchStatus = filterStatus === 'all' || a.status === filterStatus;
       const matchCategory = filterCategory === 'all' || a.category === filterCategory;
       return matchSearch && matchStatus && matchCategory;
@@ -139,11 +187,11 @@ const DutaAirdrop = () => {
 
     switch(sortBy) {
       case 'newest':
-        return filtered.sort((a, b) => b.id - a.id);
+        return filtered.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
       case 'oldest':
-        return filtered.sort((a, b) => a.id - b.id);
+        return filtered.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
       case 'deadline':
-        return filtered.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+        return filtered.sort((a, b) => new Date(a.deadline || '9999') - new Date(b.deadline || '9999'));
       case 'name':
         return filtered.sort((a, b) => a.name.localeCompare(b.name));
       default:
@@ -261,98 +309,108 @@ const DutaAirdrop = () => {
           </div>
         </div>
 
-        {/* Airdrops Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {getFilteredAndSorted().map((airdrop, index) => (
-            <div
-              key={airdrop.id}
-              className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 hover:border-blue-500/50 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/10 group animate-fade-in"
-              style={{ animationDelay: `${index * 0.05}s` }}
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold mb-2 group-hover:text-blue-400 transition-colors">{airdrop.name}</h3>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(airdrop.status)}`}>
-                      {airdrop.status.toUpperCase()}
-                    </span>
-                    {airdrop.category && (
-                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/50">
-                        {airdrop.category}
-                      </span>
+        {/* Loading State */}
+        {loading ? (
+          <div className="text-center py-16">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-gray-400">Loading airdrops...</p>
+          </div>
+        ) : (
+          <>
+            {/* Airdrops Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {getFilteredAndSorted().map((airdrop, index) => (
+                <div
+                  key={airdrop.id}
+                  className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 hover:border-blue-500/50 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/10 group animate-fade-in"
+                  style={{ animationDelay: `${index * 0.05}s` }}
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold mb-2 group-hover:text-blue-400 transition-colors">{airdrop.name}</h3>
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(airdrop.status)}`}>
+                          {airdrop.status.toUpperCase()}
+                        </span>
+                        {airdrop.category && (
+                          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/50">
+                            {airdrop.category}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    {/* Edit/Delete buttons - Only for Admin */}
+                    {isAdmin && (
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleEdit(airdrop)}
+                          className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors"
+                        >
+                          <Edit2 className="w-4 h-4 text-blue-400" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(airdrop.id)}
+                          className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4 text-red-400" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <p className="text-gray-400 text-sm mb-4 line-clamp-3">{airdrop.description}</p>
+
+                  <div className="space-y-2 mb-4 text-sm">
+                    {airdrop.reward && (
+                      <div className="flex items-center text-gray-300">
+                        <DollarSign className="w-4 h-4 mr-2 text-green-400" />
+                        <span className="text-gray-400">Reward:</span>
+                        <span className="ml-2 font-semibold text-green-400">{airdrop.reward}</span>
+                      </div>
+                    )}
+                    {airdrop.deadline && (
+                      <div className="flex items-center text-gray-300">
+                        <Calendar className="w-4 h-4 mr-2 text-yellow-400" />
+                        <span className="text-gray-400">Deadline:</span>
+                        <span className="ml-2 font-semibold">{airdrop.deadline}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex gap-2">
+                    {airdrop.link && (
+                      <a
+                        href={airdrop.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg font-semibold flex items-center justify-center space-x-2 transition-all transform hover:scale-105"
+                      >
+                        <span>Join Airdrop</span>
+                        <ExternalLink className="w-4 h-4" />
+                      </a>
+                    )}
+                    {airdrop.tutorialLink && (
+                      <a
+                        href={airdrop.tutorialLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-gray-700/50 hover:bg-gray-700 rounded-lg font-semibold transition-all"
+                      >
+                        Tutorial
+                      </a>
                     )}
                   </div>
                 </div>
-                {/* Edit/Delete buttons - Only for Admin */}
-                {isAdmin && (
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleEdit(airdrop)}
-                      className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors"
-                    >
-                      <Edit2 className="w-4 h-4 text-blue-400" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(airdrop.id)}
-                      className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4 text-red-400" />
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <p className="text-gray-400 text-sm mb-4 line-clamp-3">{airdrop.description}</p>
-
-              <div className="space-y-2 mb-4 text-sm">
-                {airdrop.reward && (
-                  <div className="flex items-center text-gray-300">
-                    <DollarSign className="w-4 h-4 mr-2 text-green-400" />
-                    <span className="text-gray-400">Reward:</span>
-                    <span className="ml-2 font-semibold text-green-400">{airdrop.reward}</span>
-                  </div>
-                )}
-                {airdrop.deadline && (
-                  <div className="flex items-center text-gray-300">
-                    <Calendar className="w-4 h-4 mr-2 text-yellow-400" />
-                    <span className="text-gray-400">Deadline:</span>
-                    <span className="ml-2 font-semibold">{airdrop.deadline}</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex gap-2">
-                {airdrop.link && (
-                  <a
-                    href={airdrop.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg font-semibold flex items-center justify-center space-x-2 transition-all transform hover:scale-105"
-                  >
-                    <span>Join Airdrop</span>
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                )}
-                {airdrop.tutorialLink && (
-                  <a
-                    href={airdrop.tutorialLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 bg-gray-700/50 hover:bg-gray-700 rounded-lg font-semibold transition-all"
-                  >
-                    Tutorial
-                  </a>
-                )}
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {getFilteredAndSorted().length === 0 && (
-          <div className="text-center py-16">
-            <Sparkles className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-500 text-lg">No airdrops found. {isAdmin ? 'Add your first airdrop to get started!' : 'Check back later for new opportunities!'}</p>
-          </div>
+            {getFilteredAndSorted().length === 0 && !loading && (
+              <div className="text-center py-16">
+                <Sparkles className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                <p className="text-gray-500 text-lg">No airdrops found. {isAdmin ? 'Add your first airdrop to get started!' : 'Check back later for new opportunities!'}</p>
+              </div>
+            )}
+          </>
         )}
       </div>
 
