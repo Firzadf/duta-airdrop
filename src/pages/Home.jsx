@@ -10,11 +10,32 @@ function Home() {
   const [airdrops, setAirdrops] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
+  const [globalSettings, setGlobalSettings] = useState({
+    telegram_link: 'https://t.me/',
+    community_count: '1,200+'
+  });
   const { t } = useTranslation();
 
   useEffect(() => {
     fetchAirdrops();
+    fetchGlobalSettings();
   }, []);
+
+  async function fetchGlobalSettings() {
+    try {
+      const { data, error } = await supabase
+        .from('global_settings')
+        .select('*')
+        .limit(1)
+        .single();
+      
+      if (data) {
+        setGlobalSettings(data);
+      }
+    } catch (error) {
+      console.log('No global settings found, using defaults.');
+    }
+  }
 
   async function fetchAirdrops() {
     try {
@@ -49,7 +70,7 @@ function Home() {
         </p>
         <div className="hero-ctas">
           <a href="#airdrop-list" className="btn-primary">{t('home.btn_explore')}</a>
-          <a href="https://t.me/your_telegram_group" target="_blank" rel="noreferrer" className="btn-secondary">{t('home.btn_telegram')}</a>
+          <a href={globalSettings.telegram_link} target="_blank" rel="noreferrer" className="btn-secondary">{t('home.btn_telegram')}</a>
         </div>
       </section>
 
@@ -64,7 +85,7 @@ function Home() {
             </div>
             <div className="notion-card stat-card" style={{ marginBottom: 0 }}>
               <Users className="stat-icon" color="var(--text-muted)" />
-              <h3 className="stat-value">1,200+</h3>
+              <h3 className="stat-value">{globalSettings.community_count}</h3>
               <p className="stat-label text-muted">{t('home.stat_community')}</p>
             </div>
           </div>
@@ -120,7 +141,7 @@ function Home() {
       <footer className="footer-section notion-card">
         <h2>{t('home.footer_title')}</h2>
         <p className="text-muted">{t('home.footer_desc')}</p>
-        <a href="https://t.me/your_telegram_group" target="_blank" rel="noreferrer" className="btn-primary" style={{ marginTop: '1rem', display: 'inline-block' }}>
+        <a href={globalSettings.telegram_link} target="_blank" rel="noreferrer" className="btn-primary" style={{ marginTop: '1rem', display: 'inline-block' }}>
           {t('home.footer_btn')}
         </a>
       </footer>

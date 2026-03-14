@@ -99,3 +99,34 @@ VALUES
     ('Claim Daily Faucet Sepolia', '0.5 Sepolia ETH', 'https://sepoliafaucet.com/'),
     ('Checkin Web3 Game', '10 EXP', 'https://examplegame.com');
 
+-- ==========================================
+-- PHASE 9: ADVANCED METADATA & GLOBAL SETTINGS
+-- ==========================================
+
+-- 1. Add new columns to existing airdrops table
+ALTER TABLE public.airdrops 
+ADD COLUMN IF NOT EXISTS network TEXT DEFAULT 'TBA',
+ADD COLUMN IF NOT EXISTS funded TEXT DEFAULT 'TBA',
+ADD COLUMN IF NOT EXISTS supply TEXT DEFAULT 'TBA';
+
+-- 2. Create Global Settings table
+CREATE TABLE public.global_settings (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    telegram_link TEXT DEFAULT 'https://t.me/',
+    community_count TEXT DEFAULT '1,200',
+    twitter_link TEXT DEFAULT 'https://twitter.com/',
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.global_settings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public read access on global_settings" ON public.global_settings
+    FOR SELECT TO public USING (true);
+
+CREATE POLICY "Allow authenticated full access on global_settings" ON public.global_settings
+    FOR ALL TO authenticated USING (true);
+
+-- Insert default settings row
+INSERT INTO public.global_settings (telegram_link, community_count, twitter_link)
+VALUES ('https://t.me/your_telegram_group', '10,500', 'https://twitter.com/your_twitter');
+

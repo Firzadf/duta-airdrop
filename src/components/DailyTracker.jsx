@@ -85,6 +85,7 @@ function DailyTracker() {
       <div className="tracker-header">
         <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px' }}>
           <Target size={18} color="var(--accent-blue)" /> Daily Missions
+          <span style={{ fontSize: '10px', backgroundColor: 'var(--bg-hover)', padding: '2px 6px', borderRadius: '4px', color: 'var(--text-muted)' }}>BETA</span>
         </h3>
         <div className="streak-badge">
           🔥 {streak} {t('home.day_streak', 'Day Streak')}

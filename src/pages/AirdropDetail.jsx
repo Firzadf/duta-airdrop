@@ -145,6 +145,27 @@ function AirdropDetail() {
               <span className="property-label text-muted">Cost Type</span>
               <span className="notion-badge status-default">{project.cost_type}</span>
             </div>
+            
+            {project.network && (
+              <div className="property-row">
+                <span className="property-label text-muted">Network</span>
+                <span>{project.network}</span>
+              </div>
+            )}
+            
+            {project.funded && (
+              <div className="property-row">
+                <span className="property-label text-muted">Funded / MC</span>
+                <span>{project.funded}</span>
+              </div>
+            )}
+            
+            {project.supply && (
+              <div className="property-row">
+                <span className="property-label text-muted">Airdrop Supply</span>
+                <span>{project.supply}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 import { PlusCircle, Image as ImageIcon, Link2, ListPlus, Database, Activity } from 'lucide-react';
 import AdminTable from '../components/AdminTable';
 import AdminAnalytics from '../components/AdminAnalytics';
+import AdminGlobalSettings from '../components/AdminGlobalSettings';
 import './AdminDashboard.css';
 
 function AdminDashboard() {
@@ -14,7 +15,10 @@ function AdminDashboard() {
     referral_link: '',
     banner_image_url: '',
     logo_image_url: '',
-    tutorial_steps: ''
+    tutorial_steps: '',
+    network: '',
+    funded: '',
+    supply: ''
   });
   
   const [loading, setLoading] = useState(false);
@@ -70,7 +74,10 @@ function AdminDashboard() {
             referral_link: formData.referral_link,
             banner_image_url: formData.banner_image_url || 'https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?q=80&w=800&auto=format&fit=crop',
             logo_image_url: formData.logo_image_url || 'https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?q=80&w=200&auto=format&fit=crop',
-            tutorial_steps: stepsArray
+            tutorial_steps: stepsArray,
+            network: formData.network || 'TBA',
+            funded: formData.funded || 'TBA',
+            supply: formData.supply || 'TBA'
           }
         ]);
 
@@ -79,7 +86,8 @@ function AdminDashboard() {
       setMessage('Airdrop berhasil ditambahkan ke database!');
       setFormData({
         title: '', description: '', status: 'Active', cost_type: 'Free',
-        referral_link: '', banner_image_url: '', logo_image_url: '', tutorial_steps: ''
+        referral_link: '', banner_image_url: '', logo_image_url: '', tutorial_steps: '',
+        network: '', funded: '', supply: ''
       });
       fetchAirdrops();
       
@@ -142,6 +150,21 @@ function AdminDashboard() {
               <label>Deskripsi Singkat</label>
               <textarea name="description" value={formData.description} onChange={handleChange} rows="3" placeholder="Jelaskan kriteria dan potensi airdrop ini..." required></textarea>
             </div>
+            
+            <div className="form-row">
+              <div className="form-group">
+                <label>Jaringan (Network)</label>
+                <input type="text" name="network" value={formData.network} onChange={handleChange} placeholder="Cth: Solana, Ethereum L2..." />
+              </div>
+              <div className="form-group">
+                <label>Pendanaan (Funded/Marketcap)</label>
+                <input type="text" name="funded" value={formData.funded} onChange={handleChange} placeholder="Cth: $20M, TBA..." />
+              </div>
+              <div className="form-group">
+                <label>Total Supply (Untuk Airdrop)</label>
+                <input type="text" name="supply" value={formData.supply} onChange={handleChange} placeholder="Cth: 5%, 50 Juta Token..." />
+              </div>
+            </div>
 
             <div className="form-group">
               <label>Link Referral Tujuan <Link2 size={16} style={{display: 'inline', verticalAlign: 'middle'}}/></label>
@@ -173,6 +196,9 @@ function AdminDashboard() {
         </div>
 
         <div className="admin-side-panel">
+          
+          <AdminGlobalSettings />
+
           <div className="admin-card notion-card sidebar-card" style={{ marginBottom: '24px' }}>
             <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', fontFamily: 'Lora, serif' }}>
               <Activity color="var(--text-main)"/> Analytics

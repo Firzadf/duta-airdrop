@@ -33,6 +33,7 @@
   position: sticky;
   top: 96px;
   height: fit-content;
+  z-index: 5;
 }
 
 /* Form Styles */
