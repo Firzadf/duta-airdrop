@@ -123,7 +123,7 @@ function AirdropDetail() {
 
   return (
     <div className="airdrop-detail-page">
-      <Link to="/" className="back-link text-muted">
+      <Link to="/" className="back-link">
         <ArrowLeft size={16} /> {t('detail.back')}
       </Link>
 
