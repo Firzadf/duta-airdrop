@@ -43,3 +43,59 @@ VALUES (
     'Active',
     'Free'
 );
+
+-- ==========================================
+-- PHASE 8: NEW FEATURES (COMMENTS & DAILY TASKS)
+-- ==========================================
+
+-- Create the comments table
+CREATE TABLE public.comments (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    airdrop_id UUID REFERENCES public.airdrops(id) ON DELETE CASCADE,
+    username TEXT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.comments ENABLE ROW LEVEL SECURITY;
+
+-- Allow anyone to read and create comments (Anonymous discussion board)
+CREATE POLICY "Allow public read access on comments" ON public.comments
+    FOR SELECT TO public USING (true);
+
+CREATE POLICY "Allow public insert on comments" ON public.comments
+    FOR INSERT TO public WITH CHECK (true);
+
+CREATE POLICY "Allow authenticated delete on comments" ON public.comments
+    FOR DELETE TO authenticated USING (true);
+
+
+-- Create the daily_tasks table (Admin sets the tasks)
+CREATE TABLE public.daily_tasks (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    title TEXT NOT NULL,
+    reward_desc TEXT,
+    link TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.daily_tasks ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public read access on daily_tasks" ON public.daily_tasks
+    FOR SELECT TO public USING (true);
+
+CREATE POLICY "Allow authenticated insert on daily_tasks" ON public.daily_tasks
+    FOR INSERT TO authenticated WITH CHECK (true);
+
+CREATE POLICY "Allow authenticated update on daily_tasks" ON public.daily_tasks
+    FOR UPDATE TO authenticated USING (true);
+
+CREATE POLICY "Allow authenticated delete on daily_tasks" ON public.daily_tasks
+    FOR DELETE TO authenticated USING (true);
+
+-- Insert dummy daily tasks
+INSERT INTO public.daily_tasks (title, reward_desc, link)
+VALUES 
+    ('Claim Daily Faucet Sepolia', '0.5 Sepolia ETH', 'https://sepoliafaucet.com/'),
+    ('Checkin Web3 Game', '10 EXP', 'https://examplegame.com');
+
