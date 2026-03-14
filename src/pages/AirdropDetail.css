@@ -1,0 +1,190 @@
+/* Notion Page Aesthetics */
+.airdrop-detail-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  transition: opacity 0.1s;
+}
+
+.back-link:hover {
+  opacity: 0.8;
+}
+
+/* Page Header */
+.notion-page-header {
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-cover {
+  width: 100vw;
+  height: 30vh;
+  min-height: 200px;
+  max-height: 400px;
+  object-fit: cover;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  margin-top: -32px;
+  margin-bottom: 0;
+  display: block;
+}
+
+.page-icon-img {
+  width: 78px;
+  height: 78px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-top: -39px;
+  margin-bottom: 16px;
+  background-color: var(--bg-main);
+  box-shadow: 0 0 0 4px var(--bg-main);
+  display: block;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  font-family: 'Lora', serif;
+}
+
+/* Notion Properties Block */
+.page-properties {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 32px;
+}
+
+.property-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 14px;
+}
+
+.property-label {
+  width: 120px;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+/* Page Blocks Layout */
+.detail-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 48px;
+  align-items: start;
+}
+
+.page-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  margin-bottom: 24px;
+}
+
+.notion-divider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 24px 0;
+}
+
+/* Custom Checkboxes */
+.notion-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 16px;
+}
+
+.notion-checkbox-block {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 6px 0;
+  cursor: pointer;
+}
+
+.notion-checkbox-block:hover {
+  background-color: var(--bg-hover);
+  border-radius: 4px;
+}
+
+.notion-checkbox-block > .notion-checkbox {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+  transition: all 0.1s;
+}
+
+.notion-checkbox.checked {
+  background-color: var(--accent-blue);
+  border-color: var(--accent-blue);
+}
+
+.notion-checkbox-text {
+  font-size: 1rem;
+  line-height: 1.5;
+  transition: color 0.1s;
+}
+
+/* Progress Bar */
+.progress-container {
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.notion-progress-bg {
+  height: 8px;
+  background-color: var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.notion-progress-fill {
+  height: 100%;
+  background-color: var(--accent-blue);
+  transition: width 0.3s ease;
+}
+
+/* Sidebar Action Card */
+.action-card {
+  padding: 24px;
+  position: sticky;
+  top: 80px;
+}
+
+@media (max-width: 768px) {
+  .detail-content-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "nav": {
+    "admin": "Admin"
+  },
+  "home": {
+    "hero_title_1": "Journey to Financial Freedom",
+    "hero_title_2": "Through",
+    "hero_subtitle": "Exclusive tracker for Web3 projects with the highest potential. Follow the steps, collect the coins, and fly to the moon!",
+    "btn_explore": "Start Exploring",
+    "btn_telegram": "Join Telegram",
+    "stat_projects": "Projects Found",
+    "stat_community": "Active Community",
+    "stat_tested": "Tested Tutorials",
+    "section_title_1": "Latest",
+    "section_title_2": "Airdrops",
+    "filter_all": "All",
+    "filter_active": "Active",
+    "filter_claimable": "Claimable",
+    "loading": "Receiving satellite signals...",
+    "empty": "No airdrops found.",
+    "footer_title": "Don't Miss Out!",
+    "footer_desc": "Join thousands of other airdrop hunters in our Telegram channel.",
+    "footer_btn": "Join Now For Free"
+  },
+  "card": {
+    "view_details": "View Details"
+  },
+  "detail": {
+    "back": "Back to List",
+    "not_found": "Airdrop not found.",
+    "back_home": "Back to Home",
+    "guide_title": "Airdrop Checklist Guide",
+    "progress": "Task Progress:",
+    "step_label": "Step",
+    "no_steps": "No specific tutorial steps for this project yet.",
+    "action_title": "Start Mission!",
+    "action_desc": "Use the referral link below to get early bonuses or extra points upon registration.",
+    "btn_ref": "Airdrop Referral Link",
+    "btn_no_ref": "No Link Available"
+  }
+}

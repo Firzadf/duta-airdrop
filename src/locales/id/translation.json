@@ -1,0 +1,41 @@
+{
+  "nav": {
+    "admin": "Admin"
+  },
+  "home": {
+    "hero_title_1": "Menuju Kebebasan Finansial",
+    "hero_title_2": "Lewat",
+    "hero_subtitle": "Tracker eksklusif untuk proyek-proyek Web3 dengan potensi terbesar. Ikuti langkah-langkahnya, kumpulkan koinnya, dan meluncur ke bulan!",
+    "btn_explore": "Mulai Exploring",
+    "btn_telegram": "Join Telegram",
+    "stat_projects": "Proyek Ditemukan",
+    "stat_community": "Komunitas Aktif",
+    "stat_tested": "Tutorial Teruji",
+    "section_title_1": "Airdrop",
+    "section_title_2": "Terbaru",
+    "filter_all": "Semua",
+    "filter_active": "Active",
+    "filter_claimable": "Claimable",
+    "loading": "Menerima sinyal satelit...",
+    "empty": "Belum ada data airdrop.",
+    "footer_title": "Jangan Ketinggalan Info Terbaru!",
+    "footer_desc": "Gabung bersama ribuan airdrop hunter lainnya di channel Telegram kami.",
+    "footer_btn": "Gabung Sekarang Gratis"
+  },
+  "card": {
+    "view_details": "Lihat Detail"
+  },
+  "detail": {
+    "back": "Kembali ke List",
+    "not_found": "Airdrop tidak ditemukan.",
+    "back_home": "Kembali ke Home",
+    "guide_title": "Panduan Checklist Airdrop",
+    "progress": "Progress Task:",
+    "step_label": "Langkah",
+    "no_steps": "Belum ada langkah tutorial spesifik untuk proyek ini.",
+    "action_title": "Mulai Kerjakan!",
+    "action_desc": "Gunakan link referral di bawah ini untuk mendapatkan bonus awal atau poin tambahan saat mendaftar.",
+    "btn_ref": "Link Referral Airdrop",
+    "btn_no_ref": "Belum ada Link"
+  }
+}

@@ -1,0 +1,85 @@
+/* Notion Card Aesthetics */
+.airdrop-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+}
+
+.card-image-container {
+  position: relative;
+  height: 120px;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.card-banner {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-logo-container {
+  position: absolute;
+  bottom: -20px;
+  left: 16px;
+  width: 48px;
+  height: 48px;
+  background-color: var(--bg-main);
+  border-radius: 4px;
+  padding: 4px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+}
+
+.card-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 2px;
+}
+
+.card-content {
+  padding: 28px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.card-title {
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.card-description {
+  font-size: 0.875rem;
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+.card-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border-color);
+  padding-top: 12px;
+  margin-top: auto;
+}
+
+/* Badge specific colors mapped from Notion */
+.status-active {
+  background-color: var(--status-active-bg);
+  color: var(--status-active-text);
+}
+.status-claimable {
+  background-color: var(--status-claim-bg);
+  color: var(--status-claim-text);
+}
+.status-ended {
+  background-color: var(--status-ended-bg);
+  color: var(--status-ended-text);
+}
+.status-default {
+  background-color: var(--status-default-bg);
+  color: var(--status-default-text);
+}

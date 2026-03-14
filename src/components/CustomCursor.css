@@ -1,0 +1,32 @@
+/* Custom Cursor Styles */
+body {
+  cursor: none; /* Hide default cursor */
+}
+
+a, button, input, select, textarea {
+  cursor: none; /* Hide cursor over interactables */
+}
+
+.custom-cursor-dot {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  background-color: var(--accent-glow);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.2s ease-in-out;
+}
+
+.custom-cursor-ring {
+  position: fixed;
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(99, 102, 241, 0.4);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.2s ease-in-out;
+}

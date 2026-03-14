@@ -1,0 +1,125 @@
+/* Notion Home Style */
+.home-page {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.hero-section {
+  text-align: center;
+  padding: 60px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-title {
+  font-family: 'Lora', serif;
+  font-size: 3.5rem;
+  margin-bottom: 24px;
+}
+
+.hero-subtitle {
+  font-size: 1.125rem;
+  max-width: 600px;
+  margin: 0 auto 32px;
+}
+
+.hero-ctas {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* Stats */
+.stats-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  padding: 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-icon {
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-family: 'Lora', serif;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+}
+
+/* List section */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-family: 'Lora', serif;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.filter-btn {
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  transition: background 0.1s;
+}
+
+.filter-btn:hover {
+  background-color: var(--bg-hover);
+}
+
+.filter-btn.active {
+  background-color: var(--item-active);
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.airdrop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Footer */
+.footer-section {
+  padding: 40px;
+  text-align: center;
+}
+
+.footer-section h2 {
+  font-family: 'Lora', serif;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 640px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
